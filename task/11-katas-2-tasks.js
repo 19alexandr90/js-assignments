@@ -38,23 +38,21 @@ function parseBankAccount(bankAccount) {
     let n = [[],[],[]];
     let j = 0;
     while (j < 3) {
-        for (let i = 0; i <= s[j].length - 3; i = i + 3) {
-            n[j].push(s[j].substr(i, 3));
-            j++;
-        }
+        for (let i = 0; i <= s[j].length - 3; i = i + 3) n[j].push(s[j].substr(i, 3));
+        j++;
     }
     let acc = '';
     for (let i = 0; i < n[0].length; i++) {
-        if (n[0][i] === '   ' && n[1][i]=== '  |' && n[2][i] === '  |') acc = acc + 1;
-        if (n[0][i] === ' _ ' && n[1][i]=== ' _|' && n[2][i] === '|_ ') acc = acc + 2;
-        if (n[0][i] === ' _ ' && n[1][i]=== ' _|' && n[2][i] === ' _|') acc = acc + 3;
-        if (n[0][i] === '   ' && n[1][i]=== '|_|' && n[1][i] === '|_|') acc = acc + 4;
-        if (n[0][i] === ' _ ' && n[1][i]=== '|_ ' && n[2][i] === ' _|') acc = acc + 5;
-        if (n[0][i] === ' _ ' && n[1][i]=== '|_ ' && n[2][i] === '|_|') acc = acc + 6;
-        if (n[0][i] === ' _ ' && n[1][i]=== '  |' && n[2][i] === '  |') acc = acc + 7;
-        if (n[0][i] === ' _ ' && n[1][i]=== '|_|' && n[2][i] === '|_|') acc = acc + 8;
-        if (n[0][i] === ' _ ' && n[1][i]=== '|_|' && n[2][i] === ' _|') acc = acc + 9;
-        if (n[0][i] === ' _ ' && n[1][i]=== '| |' && n[2][i] === '|_|') acc = acc + 0;
+        if (n[0][i]==='   ' && n[1][i]==='  |' && n[2][i]==='  |') acc=acc+1;
+        if (n[0][i]===' _ ' && n[1][i]===' _|' && n[2][i]==='|_ ') acc=acc+2;
+        if (n[0][i]===' _ ' && n[1][i]===' _|' && n[2][i]===' _|') acc=acc+3;
+        if (n[0][i]==='   ' && n[1][i]==='|_|' && n[1][i]==='|_|') acc=acc+4;
+        if (n[0][i]===' _ ' && n[1][i]==='|_ ' && n[2][i]===' _|') acc=acc+5;
+        if (n[0][i]===' _ ' && n[1][i]==='|_ ' && n[2][i]==='|_|') acc=acc+6;
+        if (n[0][i]===' _ ' && n[1][i]==='  |' && n[2][i]==='  |') acc=acc+7;
+        if (n[0][i]===' _ ' && n[1][i]==='|_|' && n[2][i]==='|_|') acc=acc+8;
+        if (n[0][i]===' _ ' && n[1][i]==='|_|' && n[2][i]===' _|') acc=acc+9;
+        if (n[0][i]===' _ ' && n[1][i]==='| |' && n[2][i]==='|_|') acc=acc+0;
     }
     return Number(acc);
 }
@@ -85,24 +83,13 @@ function parseBankAccount(bankAccount) {
  *                                                                                                'characters.'
  */
 function* wrapText(text, columns) {
-    let currBreak = 0;
-    let prevBreak = 0;
-    let l = 0;
-    let i = 0;
-    while (i < text.length) {
-        if (text[i] == ' ') {
-            currBreak = i;
-            l++;
-        }
-        if (l > columns) {
-            yield text.substring(prevBreak, currBreak);
-            prevBreak = currBreak + 1;
-            i = currBreak;
-            l = 0;
-        }
-        i++;
+    while (text) {
+        let position = columns;
+        if (text.length > position)
+            while (text[position] != " ") position--;
+        yield text.slice(0, position);
+        text = text.slice(position + 1);
     }
-    yield text.substring(prevBreak, text.length);
 }
 
 
