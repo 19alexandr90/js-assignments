@@ -34,7 +34,29 @@
  *
  */
 function parseBankAccount(bankAccount) {
-    throw new Error('Not implemented');
+    let s = bankAccount.split('\n');
+    let n = [[],[],[]];
+    let j = 0;
+    while (j < 3) {
+        for (let i = 0; i <= s[j].length - 3; i = i + 3) {
+            n[j].push(s[j].substr(i, 3));
+            j++;
+        }
+    }
+    let acc = '';
+    for (let i = 0; i < n[0].length; i++) {
+        if (n[0][i] === '   ' && n[1][i]=== '  |' && n[2][i] === '  |') acc = acc + 1;
+        if (n[0][i] === ' _ ' && n[1][i]=== ' _|' && n[2][i] === '|_ ') acc = acc + 2;
+        if (n[0][i] === ' _ ' && n[1][i]=== ' _|' && n[2][i] === ' _|') acc = acc + 3;
+        if (n[0][i] === '   ' && n[1][i]=== '|_|' && n[1][i] === '|_|') acc = acc + 4;
+        if (n[0][i] === ' _ ' && n[1][i]=== '|_ ' && n[2][i] === ' _|') acc = acc + 5;
+        if (n[0][i] === ' _ ' && n[1][i]=== '|_ ' && n[2][i] === '|_|') acc = acc + 6;
+        if (n[0][i] === ' _ ' && n[1][i]=== '  |' && n[2][i] === '  |') acc = acc + 7;
+        if (n[0][i] === ' _ ' && n[1][i]=== '|_|' && n[2][i] === '|_|') acc = acc + 8;
+        if (n[0][i] === ' _ ' && n[1][i]=== '|_|' && n[2][i] === ' _|') acc = acc + 9;
+        if (n[0][i] === ' _ ' && n[1][i]=== '| |' && n[2][i] === '|_|') acc = acc + 0;
+    }
+    return Number(acc);
 }
 
 
@@ -63,7 +85,24 @@ function parseBankAccount(bankAccount) {
  *                                                                                                'characters.'
  */
 function* wrapText(text, columns) {
-    throw new Error('Not implemented');
+    let currBreak = 0;
+    let prevBreak = 0;
+    let l = 0;
+    let i = 0;
+    while (i < text.length) {
+        if (text[i] == ' ') {
+            currBreak = i;
+            l++;
+        }
+        if (l > columns) {
+            yield text.substring(prevBreak, currBreak);
+            prevBreak = currBreak + 1;
+            i = currBreak;
+            l = 0;
+        }
+        i++;
+    }
+    yield text.substring(prevBreak, text.length);
 }
 
 
@@ -100,7 +139,57 @@ const PokerRank = {
 }
 
 function getPokerHandRank(hand) {
-    throw new Error('Not implemented');
+    let values = { 2 : 0, 3 : 0, 4 : 0, 5 : 0, 6 : 0, 7 : 0, 8 : 0, 9 : 0, 10 : 0, 'J' : 0, 'Q' : 0, 'K' : 0, 'A' : 0};
+    let num = new Array(14);
+    num.fill(0);
+    let suits = {'♣' : 0, '♦' : 0, '♠' : 0, '♥' : 0};
+    for (let i = 0; i < 5; i++) {
+        values[hand[i].substring(0, hand[i].length - 1)]++;
+        suits[hand[i][hand[i].length - 1]]++;
+    }
+    for (let key in values) {
+        if (values[key]) {
+            if (key == 'A') {num[0] = values[key]; num[13] = values[key];
+            } else if (key == 'K') {num[12] = values[key];
+            } else if (key == 'Q') {num[11] = values[key];
+            } else if (key == 'J') {num[10] = values[key];
+            } else {num[Number(key) - 1] = values[key];
+            }
+        }
+    }
+    let straight = false;
+    let flush = false;
+    for (let i = 0; i < 10; i++) {
+        if (num[i] && num[i + 1] && num[i + 2] && num[i + 3] && num[i + 4]) straight = true;
+    }
+    for (let key in suits) {
+        if (suits[key] == 5) flush = true;
+    }
+    if (straight) {
+        if (flush) {
+            return PokerRank.StraightFlush;
+        } else {
+            return PokerRank.Straight;
+        }
+    }
+    if (flush) return PokerRank.Flush;
+    for (let i = 0; i < 13; i++) {
+        if (num[i] == 4) return PokerRank.FourOfKind;
+        if (num[i] == 3) {
+            for (let j = 0; j < 13; j++) {
+                if ((j != i) && (num[j] == 2)) return PokerRank.FullHouse;
+            }
+            return PokerRank.ThreeOfKind;
+        }
+        if (num[i] == 2) {
+            for (let j = 0; j < 13; j++) {
+                if ((j != i) && (num[j] == 3)) return PokerRank.FullHouse;
+                if ((j != i) && (num[j] == 2)) return PokerRank.TwoPairs;
+            }
+        return PokerRank.OnePair;
+        }
+    }
+    return PokerRank.HighCard;
 }
 
 
