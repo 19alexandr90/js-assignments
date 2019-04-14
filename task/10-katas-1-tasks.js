@@ -17,8 +17,24 @@
  *  ]
  */
 function createCompassPoints() {
-    throw new Error('Not implemented');
-    var sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    const sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    let result = new Array(32);
+    for (let i = 0; i < result.length; i++) {
+        let side1 = sides[~~(i / 8)];
+        let side2 = ~~(i / 8) === 3 ? sides[0] : sides[~~(i / 8) + 1];
+        let s12 = (~~(i / 8) + 1) % 2 === 0 ? side2 + side1 : side1 + side2;
+        switch (i % 8) {
+            case 0 : result[i] = side1; break;
+            case 1 : result[i] = side1 + 'b' + side2; break;
+            case 2 : result[i] = side1 + s12; break;
+            case 3 : result[i] = s12 + 'b' + side1; break;
+            case 4 : result[i] = s12; break;
+            case 5 : result[i] = s12 + 'b' + side2; break;
+            case 6 : result[i] = side2 + s12; break;
+            case 7 : result[i] = side2 + 'b' + side1; break;
+        }
+    }
+    return result.map((side, i) => {return {abbreviation: side, azimuth: i * 11.25}});
 }
 
 
@@ -88,7 +104,33 @@ function* expandBraces(str) {
  *
  */
 function getZigZagMatrix(n) {
-    throw new Error('Not implemented');
+    let result = new Array(n);
+    for (let i = 0; i < n; i++) {
+        result[i] = new Array(n);
+    }
+    let i = 0;
+    let j = 0;
+    let dir = 1;
+    let counter = 0;
+    while (counter < n * n) {
+        result[i][j] = counter++;
+        if ((i == 0) && dir) {
+            (j == n - 1) ? i++ : j++; dir = 0;
+        } else if ((j == 0) && !dir) {
+            (i == n - 1) ? j++ : i++; dir = 1;
+        } else if ((i == n - 1) && !dir) {
+            j++; dir = 1;
+        } else if ((j == n - 1) && dir) {
+            i++; dir = 0;
+        } else if (dir) {
+            i--;
+            j++;
+        } else {
+            i++;
+            j--;
+        }
+    }
+    return result;
 }
 
 
@@ -137,7 +179,9 @@ function canDominoesMakeRow(dominoes) {
  * [ 1, 2, 4, 5]          => '1,2,4,5'
  */
 function extractRanges(nums) {
-    throw new Error('Not implemented');
+    let arr = nums.map((a, i) => ((nums[i - 1] + 1 == a) && (nums[i + 1] - 1 == a)) ? '-' : a);
+    let arr2 = arr.filter((a, i) => (arr[i] != arr[i - 1])).map((a, i, ar) => (a == '-') || (ar[i + 1] == '-') ? a : a + ',');
+    return arr2.join('').slice(0, -1);
 }
 
 module.exports = {
