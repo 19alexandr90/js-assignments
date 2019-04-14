@@ -133,24 +133,14 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    // let queue = [];
-    // queue.push(root);
-    // while (queue.length > 0) {
-    //     let elem = queue.shift();
-    //     yield elem;
-    //     if (elem.children) {
-    //         for (let leaf of elem.children){
-    //             queue.push(leaf);
-    //         }
-    //     }
-    // }
-    const queue = [root];
-    while (queue.length > 0) {
-        root = queue.shift();
-        yield root;
-        if (typeof root.children !== 'undefined')
-            for (let value of root.children)
-                queue.push(value);
+    let nodes = [root];
+    let i = 0;
+    while (i < nodes.length) {
+        let current = nodes[i++];
+        yield current;
+        if (current.children) {
+            current.children.map((ch) => nodes.push(ch));
+        }
     }
 }
 
